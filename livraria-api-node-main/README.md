@@ -2,6 +2,7 @@
 
 API RESTful de Livros e Autores em Clean Architecture, com autenticação stateless por JWT,
 senhas em hash BCrypt e controle de acesso por perfil (RBAC) aplicado em middlewares.
+O contrato dos endpoints está publicado em OpenAPI 3.0, com interface interativa.
 
 ## Como rodar
 
@@ -12,6 +13,28 @@ npm start          # http://localhost:3000
 
 O arquivo `database.txt` é criado na primeira execução, já semeado com os usuários abaixo.
 Para front-end, abra o `index.html` da raiz do repositório no navegador.
+
+## Documentação da API
+
+| Recurso | Endereço |
+|---------|----------|
+| Swagger UI (interativo) | <http://localhost:3000/docs> |
+| Especificação OpenAPI (JSON) | <http://localhost:3000/docs/api.json> |
+
+A especificação vive em `docs/openapi.js` — um objeto OAS 3.0.3 em JavaScript, servido
+tanto pela UI quanto pela rota JSON. Documenta os 8 endpoints com schemas de entrada,
+campos obrigatórios, exemplos e **todos** os status de erro (400, 401, 403, 404, 409, 500).
+
+### Testando rotas protegidas no navegador
+
+1. Abra `/docs` e execute `POST /auth/login` com uma das credenciais da tabela abaixo.
+2. Copie o valor do campo `token` da resposta.
+3. Clique em **Authorize** (topo à direita) e cole **apenas o token** — sem o prefixo
+   `Bearer`, que o Swagger UI adiciona sozinho.
+4. As rotas com cadeado passam a enviar `Authorization: Bearer <token>`. Teste
+   `POST /autores`: com o token do admin responde 201; com o do leitor, 403; sem token, 401.
+
+A autorização fica retida entre recarregamentos da página (`persistAuthorization`).
 
 ## Credenciais de teste
 
@@ -29,6 +52,7 @@ não é aceita do corpo da requisição, para que ninguém se promova a administ
 |--------|----------------------------------|----------------------|---------|--------------------|
 | GET    | `/api/v1/livros`                 | Público              | 200     | —                  |
 | GET    | `/api/v1/livros/:id`             | Público              | 200     | —                  |
+| GET    | `/api/v1/autores`                | Público              | 200     | —                  |
 | POST   | `/api/v1/auth/register`          | Público              | 201     | —                  |
 | POST   | `/api/v1/auth/login`             | Público              | 200     | 401                |
 | POST   | `/api/v1/livros/:id/comentarios` | `USER` ou `ADMIN`    | 201     | 401                |
