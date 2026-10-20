@@ -26,6 +26,11 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/livros', livroRoutes);
 app.use('/api/v1/autores', autorRoutes);
 
+// Rota inexistente responde no mesmo contrato de erro das demais
+app.use((req, res) => {
+  res.status(404).json({ erro: "Recurso não encontrado." });
+});
+
 // Middleware Global de Tratamento de Erros
 app.use(errorHandler);
 
